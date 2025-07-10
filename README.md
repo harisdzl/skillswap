@@ -3,7 +3,8 @@
 ## Deployed app:
 
 - The application has been deployed to Vercel, and can be accessed at https://skillswap-poc.vercel.app/.
-- You can test it out by signing up and going through the onboarding process OR by using the demo account: (The demo account's personalised content has already been generated)
+- You can test it out by signing up and going through the onboarding process. If you were to test it out, try to select a > 5 skills to learn and teach so that there is a higher chance for matching!
+- OR by using the demo account: (The demo account's personalised content has already been generated)
 - Email: jack@test.com
 - Password: 123456
 
@@ -92,6 +93,8 @@ The user flow is as follows:
 
 - The initial plan was to create a marketplace for peer-to-peer learning, where users can create profiles, explore matches, and connect with others based on their skills and interests.
 - Then I realised that I could be more creative and explore a tinder-like swiping experience, which I eventually did in a simpler way buy using the skill matching score to be able to help the user focus on the most relevant matches.
+- A key decision that I made was to initialise a fixed list of skill sets for this POC, allowing for simplified matching logic and user onboarding without needing a complex skill curation or tagging system. This helped focus development on core functionality like match scoring, AI content generation, and the learning roadmap experience.
+- The match page unfortunately is not optimized for mobile, which is an improvement to be made.
 
 2. During the implementation
 
@@ -104,6 +107,9 @@ The user flow is as follows:
   - Explore how users can interact with each other to learn, and where time credits would be rewarded.
   - Explore how communities can be created from the platform, to drive engagement and foster a sense of community.
   - Explore how the platform could be used to support skill acquisition and learning, by providing resources and tools for users to improve their skills, where AI can be a valuable resource.
+  - Improve the responsiveness to screen sizes.
+  - Introduce streaming to the ai generated content.
+  - Explore how AI can be used to help the user navigate skill based learning, instead of a traditional interface.
 
 ---
 
