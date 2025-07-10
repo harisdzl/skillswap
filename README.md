@@ -1,5 +1,12 @@
 # Peer Learning Match Platform
 
+## Deployed app:
+
+- The application has been deployed to Vercel, and can be accessed at https://skillswap-poc.vercel.app/.
+- You can test it out by signing up and going through the onboarding process OR by using the demo account: (The demo account's personalised content has already been generated)
+- Email: jack@test.com
+- Password: 123456
+
 ## Setup Instructions
 
 1. **Clone the repository**
