@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Peer Learning Match Platform
 
-## Getting Started
+## Setup Instructions
 
-First, run the development server:
+1. **Clone the repository**
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/harisdzl/skillswap.git
+cd peer-learning-platform
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Install dependencies**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. **Create a Supabase project**
 
-## Learn More
+- Follow the instructions in the [Supabase documentation](https://supabase.com/docs) to create a new Supabase project and obtain the necessary keys.
 
-To learn more about Next.js, take a look at the following resources:
+4. **Configure the environment variables**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+OPENAI_API_KEY=your_openai_api_key
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+If you do not have an openai api key, there just wont be any personalised content generated for the matches.
 
-## Deploy on Vercel
+5. **Ensure your Supabase schema includes**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- The supabase schema is defined in the `schemas.sql` file.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Overview
+
+In this POC, I created a peer-to-peer learning platform that connects users based on the skills they want to learn and the skills they can teach.
+
+My main objective of this POC is to explore a new way of matching users based on their skills and interests, while also utilizing generative AI to provide personalised content for each match. Although I did not tackle the process of skill learning itself and the time banking aspect, this POC serves as a proof of concept for the concept of a medium for peer-to-peer learning, and how the experience can be enhanced by utilizing AI.
+
+## User Flow
+
+The user flow is as follows:
+
+1. User signs up with their email and password.
+2. They then complete their onboarding process, which includes filling up their name, their bio and the skills they can teach and want to learn.
+3. Once the onboarding process is complete, the user is redirected to the match page, where they can browse through their top matches in a sliding-like fashion.
+4. If they are interested to explore more they can explore in the explore page.
+5. They can see their own details under the profile page.
+
+---
+
+## Features
+
+- **Authentication**: Secure login and sign up with Supabase
+- **User Profiles**: Users create a profile with their name, bio, and skills they can teach or want to learn.
+- **Skill-Based Matching**: Matches are ranked based on overlapping and complementary skills.
+  - The main logic behind the match scoring is simple, where the function calculates a compatibility score between a new user and all existing users by comparing their teach and learn skills, then stores the results in the user_matches table. The score is based on how many overlapping skills they can teach and learn from each other, scaled to a maximum of 100.
+- **AI-Generated Match Content**:
+  - A personalised explanation of why the match is a good fit
+  - A suggested 3-week learning roadmap
+  - A suggested message for reaching out
+- **Interactive Match Navigation**: Users can browse through their top matches with an interface that updates in real-time.
+
+---
+
+## Tech Stack
+
+- **Frontend**: NextJS, TailwindCSS, Shadcn UI
+- **Backend**: Supabase (PostgreSQL, Auth), OpenAI API
+- **Data Management**: React Hooks, Supabase client
+- **Deployment**: Vercel
+- **My development stack**: I used VSCode with Supermaven (free) extension, and mainly ChatGPT to help accelerate the code process and brainstorm new ideas.
+- I decided to use Supabase instead of building a backend from scratch, as it provides a lot of functionalities and is easy to integrate with other technologies, which would allow me to focus on the functionality of the POC. NextJS is something I'm just familiar with.
+
+---
+
+## Entity Relationship Diagram
+
+## Project Plan
+
+1. Initial Plan
+
+- The initial plan was to create a marketplace for peer-to-peer learning, where users can create profiles, explore matches, and connect with others based on their skills and interests.
+- Then I realised that I could be more creative and explore a tinder-like swiping experience, which I eventually did in a simpler way buy using the skill matching score to be able to help the user focus on the most relevant matches.
+
+2. During the implementation
+
+- While implementing the match page, I was wondering where AI could be used to help the user understand the matches.
+- I decided to use OpenAI's GPT-4 API to generate personalised content for each match, which would be stored in the user_matches table.
+
+3. Future extensions
+
+- Of course, there are many features and improvements that could be added to this POC but the main focus would be to:
+  - Explore how users can interact with each other to learn, and where time credits would be rewarded.
+  - Explore how communities can be created from the platform, to drive engagement and foster a sense of community.
+  - Explore how the platform could be used to support skill acquisition and learning, by providing resources and tools for users to improve their skills, where AI can be a valuable resource.
+
+---
+
+## Conclusion
+
+This POC was a fun and challenging project that allowed me to explore new technologies and learn about peer-to-peer learning.
