@@ -51,7 +51,13 @@ export function SignupForm({
         });
       }
 
-      router.push("/login");
+      // Authenticate the user and push to onboarding
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      router.push("/onboarding");
     } finally {
       setLoading(false);
     }
