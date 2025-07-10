@@ -14,25 +14,73 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { teachingSkills } from "@/constants";
 import { SearchMultiSelectInput } from "@/components/searchMultipleSelectInput";
+import { useSkills } from "../hooks/useSkills";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Skill, SkillType } from "@/types";
 
 export default function Page() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-
-  const [formData, setFormData] = useState({
+  const [authLoading, setAuthLoading] = useState(true);
+  const [currUserId, setCurrUserId] = useState<string>("");
+  const [formData, setFormData] = useState<{
+    name: string;
+    bio: string;
+    canTeach: Skill[];
+    interestedIn: Skill[];
+  }>({
     name: "",
     bio: "",
-    canTeach: [] as string[],
-    interestedIn: [] as string[],
+    canTeach: [],
+    interestedIn: [],
   });
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const { skills, skillsLoading } = useSkills();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Handle form submission here
+
+    if (!formData.name.trim() || !formData.bio.trim()) {
+      alert("Please fill in your name and bio.");
+      return;
+    }
+
+    try {
+      setSubmitLoading(true);
+      const { error: profileError } = await supabase.from("users").upsert({
+        id: currUserId,
+        name: formData.name.trim(),
+        bio: formData.bio.trim(),
+      });
+
+      if (profileError) throw profileError;
+
+      const teachingSkillsInserts = formData.canTeach.map((skill) => ({
+        userId: currUserId,
+        skillId: skill.id,
+        type: SkillType.TEACH,
+      }));
+
+      const learningSkillsInserts = formData.interestedIn.map((skill) => ({
+        userId: currUserId,
+        skillId: skill.id,
+        type: SkillType.LEARN,
+      }));
+
+      const { error: insertError } = await supabase
+        .from("user_skills")
+        .insert([...teachingSkillsInserts, ...learningSkillsInserts]);
+
+      if (insertError) throw insertError;
+      setSubmitLoading(false);
+
+      router.push("/dashboard");
+    } catch (error: any) {
+      console.error("Error submitting profile:", error);
+      alert(`Error submitting profile: ${error.message || error}`);
+    }
   };
+
   useEffect(() => {
     const checkAuth = async () => {
       const { data } = await supabase.auth.getSession();
@@ -40,14 +88,16 @@ export default function Page() {
       if (!data.session) {
         router.replace("/login");
       } else {
-        setLoading(false);
+        setCurrUserId(data.session.user.id);
+
+        setAuthLoading(false);
       }
     };
 
     checkAuth();
   }, [router]);
 
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Spinner />
@@ -99,30 +149,49 @@ export default function Page() {
                 className="min-h-[100px] text-base resize-none"
               />
             </div>
-            <SearchMultiSelectInput
-              label="What skills can you teach?"
-              options={teachingSkills}
-              selected={formData.canTeach}
-              onChange={(selected) =>
-                setFormData((prev) => ({ ...prev, canTeach: selected }))
-              }
-            />
+            {skillsLoading ? (
+              <div className="flex flex-col gap-4">
+                <Skeleton className="w-full h-10" />
+                <Skeleton className="w-full h-10" />
+              </div>
+            ) : (
+              <>
+                <SearchMultiSelectInput
+                  label="What skills can you teach?"
+                  options={skills}
+                  selected={formData.canTeach}
+                  onChange={(selected) =>
+                    setFormData((prev) => ({ ...prev, canTeach: selected }))
+                  }
+                />
 
-            <SearchMultiSelectInput
-              label="What skills are you interested in learning?"
-              options={teachingSkills}
-              selected={formData.interestedIn}
-              onChange={(selected) =>
-                setFormData((prev) => ({ ...prev, interestedIn: selected }))
-              }
-            />
+                <SearchMultiSelectInput
+                  label="What skills are you interested in learning?"
+                  options={skills}
+                  selected={formData.interestedIn}
+                  onChange={(selected) =>
+                    setFormData((prev) => ({ ...prev, interestedIn: selected }))
+                  }
+                />
+              </>
+            )}
+
             <div className="pt-4">
               <Button
                 type="submit"
-                className="w-full text-base py-6"
-                disabled={!formData.name.trim() || !formData.bio.trim()}
+                className="w-full text-base py-6 cursor-pointer"
+                disabled={
+                  !formData.name.trim() ||
+                  !formData.bio.trim() ||
+                  formData.canTeach.length === 0 ||
+                  formData.interestedIn.length === 0
+                }
               >
-                Complete Setup
+                {submitLoading ? (
+                  <Spinner className="w-5 h-5" />
+                ) : (
+                  "Complete Onboarding"
+                )}
               </Button>
             </div>
           </form>

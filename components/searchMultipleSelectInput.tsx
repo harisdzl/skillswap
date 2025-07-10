@@ -4,12 +4,13 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
+import { Skill } from "@/types";
 
 interface SearchMultiSelectInputProps {
   label: string;
-  options: string[];
-  selected: string[];
-  onChange: (selected: string[]) => void;
+  options: Skill[];
+  selected: Skill[];
+  onChange: (selected: Skill[]) => void;
   placeholder?: string;
 }
 
@@ -25,17 +26,17 @@ export function SearchMultiSelectInput({
 
   const filteredOptions = options.filter(
     (skill) =>
-      skill.toLowerCase().includes(query.toLowerCase()) &&
-      !selected.includes(skill)
+      skill.skill.toLowerCase().includes(query.toLowerCase()) &&
+      !selected.some((s) => s.id === skill.id)
   );
 
-  const handleSelect = (skill: string) => {
+  const handleSelect = (skill: Skill) => {
     onChange([...selected, skill]);
     setQuery("");
   };
 
-  const handleRemove = (skill: string) => {
-    onChange(selected.filter((s) => s !== skill));
+  const handleRemove = (skill: Skill) => {
+    onChange(selected.filter((s) => s.id !== skill.id));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -43,8 +44,6 @@ export function SearchMultiSelectInput({
       e.preventDefault();
       if (filteredOptions.length > 0) {
         handleSelect(filteredOptions[0]);
-      } else if (query.trim() && !selected.includes(query.trim())) {
-        handleSelect(query.trim());
       }
     }
   };
@@ -56,12 +55,13 @@ export function SearchMultiSelectInput({
         {selected.length > 0 ? (
           <div className="flex flex-wrap gap-2 pt-2">
             {selected.map((skill) => (
-              <Badge key={skill} variant="secondary" className="text-sm">
-                {skill}
+              <Badge key={skill.id} variant="secondary" className="text-sm">
+                {skill.skill}
                 <button
                   type="button"
                   onClick={() => handleRemove(skill)}
                   className="ml-2 hover:text-destructive cursor-pointer"
+                  aria-label={`Remove ${skill.skill}`}
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -83,20 +83,21 @@ export function SearchMultiSelectInput({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className="mt-2"
+          aria-label={label}
         />
 
         {(isFocused || query.length > 0) && filteredOptions.length > 0 && (
           <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-48 overflow-y-auto">
             {filteredOptions.map((skill) => (
               <div
-                key={skill}
+                key={skill.id}
                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
                 onMouseDown={(e) => {
                   e.preventDefault();
                   handleSelect(skill);
                 }}
               >
-                {skill}
+                {skill.skill}
               </div>
             ))}
           </div>
