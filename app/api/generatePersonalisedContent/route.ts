@@ -13,7 +13,6 @@ const openai = new OpenAI({
 
 export async function POST(req: NextRequest) {
   try {
-    console.log(req);
     const body = (await req.json()) as {
       currentUser: UserWithSkills;
       matchUser: UserWithSkillsAndMatchScore;
@@ -21,12 +20,6 @@ export async function POST(req: NextRequest) {
 
     const { currentUser, matchUser } = body;
 
-    if (matchUser.personalisedContent) {
-      return NextResponse.json(
-        matchUser.personalisedContent as PersonalisedContent,
-        { status: 200 }
-      );
-    }
     const prompt = `
         You are an intelligent learning companion helping users in a peer-learning platform. Based on two users' profiles, generate a personalised summary explaining why they are a great learning match, a 3-week learning roadmap, and a recommended way for the current user to connect with the other user.
 
@@ -50,7 +43,7 @@ export async function POST(req: NextRequest) {
         Here is the information:
 
         **Current User**
-        - Name: ${currentUser.name}
+        - Refer to this user as You (second person pronoun)
         - Bio: ${currentUser.bio}
         - Can Teach: ${currentUser.canTeachSkills
           .map((s) => s.skill)
