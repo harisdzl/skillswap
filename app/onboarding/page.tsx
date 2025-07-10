@@ -18,6 +18,7 @@ import { SearchMultiSelectInput } from "@/components/searchMultipleSelectInput";
 import { useSkills } from "../hooks/useSkills";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Skill, SkillType } from "@/types";
+import { calculateAndStoreMatchScoresForNewUser } from "@/lib/utils";
 
 export default function Page() {
   const router = useRouter();
@@ -72,6 +73,9 @@ export default function Page() {
         .insert([...teachingSkillsInserts, ...learningSkillsInserts]);
 
       if (insertError) throw insertError;
+
+      // Calculate match scores for this user, and all other users
+      await calculateAndStoreMatchScoresForNewUser(currUserId);
       setSubmitLoading(false);
 
       router.push("/match");
