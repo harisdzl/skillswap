@@ -24,6 +24,7 @@ export interface UserWithDetailsAndSkills {
   id: string;
   name: string;
   bio: string;
+  timeCredits: number;
   userSkills: UserSkill[];
 }
 export interface UserSkill {
@@ -34,6 +35,7 @@ export interface UserWithSkills {
   id: string;
   name: string;
   bio: string;
+  timeCredits: number;
   canTeachSkills: Skill[];
   interestedSkills: Skill[];
 }

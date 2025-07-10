@@ -34,6 +34,7 @@ export function useCurrentUserWithSkills() {
           id,
           name,
           bio,
+          timeCredits,
           userSkills:user_skills (
             type,
             skill:skills (id, skill)
@@ -63,6 +64,7 @@ export function useCurrentUserWithSkills() {
         bio: currUserData.bio,
         canTeachSkills,
         interestedSkills,
+        timeCredits: currUserData.timeCredits,
       };
 
       setUser(formattedUser);

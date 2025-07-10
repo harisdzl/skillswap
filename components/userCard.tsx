@@ -107,7 +107,7 @@ export function UserCard({
           variant="default"
           onClick={onConnect}
         >
-          Connect
+          Connect with 10 time credits
         </Button>
       </CardFooter>
     </Card>

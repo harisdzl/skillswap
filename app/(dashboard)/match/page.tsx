@@ -21,14 +21,23 @@ export default function Page() {
   const [aiConnectSuggestions, setAiConnectSuggestions] = useState("");
   const [loadingContent, setLoadingContent] = useState(false);
 
-  const currentUser = users[currentIndex];
+  const matchedUser = users[currentIndex];
 
   useEffect(() => {
     async function generateContent() {
-      if (!currUser || !currentUser) {
+      if (!currUser || !matchedUser) {
         setAiWhyMatch("");
         setAiRoadmap("");
         setAiConnectSuggestions("");
+        return;
+      }
+
+      if (matchedUser.personalisedContent) {
+        setAiWhyMatch(matchedUser.personalisedContent.aiWhyMatch);
+        setAiRoadmap(matchedUser.personalisedContent.aiRoadmap);
+        setAiConnectSuggestions(
+          matchedUser.personalisedContent.aiConnectSuggestions
+        );
         return;
       }
 
@@ -42,7 +51,7 @@ export default function Page() {
           },
           body: JSON.stringify({
             currentUser: currUser,
-            matchUser: currentUser,
+            matchUser: matchedUser,
           }),
         });
 
@@ -66,7 +75,7 @@ export default function Page() {
     }
 
     generateContent();
-  }, [currUser, currentUser]);
+  }, [currUser, matchedUser]);
 
   if (loading || currUserLoading) {
     return (
@@ -81,7 +90,7 @@ export default function Page() {
     );
   }
 
-  if (!currentUser) {
+  if (!matchedUser) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted">
         <p className="text-muted-foreground text-lg">
@@ -108,7 +117,7 @@ export default function Page() {
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <motion.div
-            key={currentUser.id}
+            key={matchedUser.id}
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
@@ -116,11 +125,11 @@ export default function Page() {
             className="min-w-sm"
           >
             <UserCard
-              name={currentUser.name}
-              bio={currentUser.bio}
-              canTeach={currentUser.canTeachSkills.map((s) => s.skill)}
-              interestedIn={currentUser.interestedSkills.map((s) => s.skill)}
-              matchScore={currentUser.matchScore}
+              name={matchedUser.name}
+              bio={matchedUser.bio}
+              canTeach={matchedUser.canTeachSkills.map((s) => s.skill)}
+              interestedIn={matchedUser.interestedSkills.map((s) => s.skill)}
+              matchScore={matchedUser.matchScore}
             />
           </motion.div>
           <Button

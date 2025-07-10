@@ -19,6 +19,7 @@ export function useUsersWithSkills() {
           id,
           name,
           bio,
+          timeCredits,
           user_skills (
             type,
             skills:skills (
@@ -46,6 +47,7 @@ export function useUsersWithSkills() {
             id: user.id,
             name: user.name,
             bio: user.bio,
+            timeCredits: user.timeCredits,
             canTeachSkills,
             interestedSkills,
           };
