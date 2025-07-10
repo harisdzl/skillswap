@@ -48,6 +48,7 @@ export function useUsersWithSkillsAndMatchScores() {
         `
         )
         .eq("userAId", currentUserId)
+        .gt("matchScore", 0)
         .order("matchScore", { ascending: false });
 
       if (matchError || !data) {
