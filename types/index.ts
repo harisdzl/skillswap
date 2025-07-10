@@ -20,6 +20,12 @@ export enum SkillType {
   LEARN = "learn",
 }
 
+export interface UserWithDetailsAndSkills {
+  id: string;
+  name: string;
+  bio: string;
+  userSkills: UserSkill[];
+}
 export interface UserSkill {
   skill: Skill;
   type: SkillType;
@@ -32,8 +38,15 @@ export interface UserWithSkills {
   interestedSkills: Skill[];
 }
 
+export interface PersonalisedContent {
+  aiWhyMatch: string;
+  aiRoadmap: string;
+  aiConnectSuggestions: string;
+}
+
 export interface MatchResult {
   matchScore: number;
+  personalisedContent?: PersonalisedContent;
   userB: {
     id: string;
     name: string;
@@ -49,4 +62,5 @@ export interface UserWithSkillsAndMatchScore {
   canTeachSkills: Skill[];
   interestedSkills: Skill[];
   matchScore: number;
+  personalisedContent: PersonalisedContent;
 }

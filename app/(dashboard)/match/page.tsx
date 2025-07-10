@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UserCard } from "@/components/userCard";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
@@ -8,13 +8,67 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useUsersWithSkillsAndMatchScores } from "@/app/hooks/useUsersWithSkillsAndMatchScores";
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
+import { useCurrentUserWithSkills } from "@/app/hooks/useCurrentUserWithSkills";
 
 export default function Page() {
   const { users, loading } = useUsersWithSkillsAndMatchScores();
+  const { user: currUser, loading: currUserLoading } =
+    useCurrentUserWithSkills();
+
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [aiWhyMatch, setAiWhyMatch] = useState("");
+  const [aiRoadmap, setAiRoadmap] = useState("");
+  const [aiConnectSuggestions, setAiConnectSuggestions] = useState("");
+  const [loadingContent, setLoadingContent] = useState(false);
+
   const currentUser = users[currentIndex];
 
-  if (loading) {
+  useEffect(() => {
+    async function generateContent() {
+      if (!currUser || !currentUser) {
+        setAiWhyMatch("");
+        setAiRoadmap("");
+        setAiConnectSuggestions("");
+        return;
+      }
+
+      setLoadingContent(true);
+
+      try {
+        const res = await fetch("/api/generatePersonalisedContent", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            currentUser: currUser,
+            matchUser: currentUser,
+          }),
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch personalised content");
+        }
+
+        const content = await res.json();
+
+        setAiWhyMatch(content.aiWhyMatch);
+        setAiRoadmap(content.aiRoadmap);
+        setAiConnectSuggestions(content.aiConnectSuggestions);
+      } catch (error) {
+        console.error("Failed to generate personalized content:", error);
+        setAiWhyMatch("Failed to generate match explanation.");
+        setAiRoadmap("Failed to generate roadmap.");
+        setAiConnectSuggestions("Failed to generate connection suggestions.");
+      }
+
+      setLoadingContent(false);
+    }
+
+    generateContent();
+  }, [currUser, currentUser]);
+
+  if (loading || currUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted">
         <div className="flex flex-col items-center gap-4">
@@ -31,7 +85,7 @@ export default function Page() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted">
         <p className="text-muted-foreground text-lg">
-          No matches found. Please try again later or explore {""}
+          No matches found. Please try again later or explore{" "}
           <Link href="/explore" className="text-blue-500 hover:underline mt-4">
             here!
           </Link>
@@ -39,15 +93,6 @@ export default function Page() {
       </div>
     );
   }
-
-  //TEMP DUMMY AI GENERATED CONTENT FOR NOW
-  const aiWhyMatch = `You and ${
-    currentUser.name
-  } are a great match because of complementary skills. They can teach ${currentUser.canTeachSkills
-    .map((s) => s.skill)
-    .join(", ")}, which aligns with your learning interests.`;
-  const aiRoadmap = `Week 1: Introduction and discussion on ${currentUser.canTeachSkills[0]?.skill}.\nWeek 2: Practical exercises in ${currentUser.interestedSkills[0]?.skill}.\nWeek 3: Feedback and next steps.`;
-  const aiConnectSuggestions = `Send a message to ${currentUser.name} about your shared interests in ${currentUser.interestedSkills[0]?.skill}. Suggest a quick call or chat!`;
 
   return (
     <div className="h-lvh min-w-screen bg-muted p-8 flex max-w-6xl ">
@@ -88,24 +133,30 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="w-1/2 bg-white p-6 rounded-lg shadow-md flex flex-col gap-6 h-full">
+      <div className="w-1/2 bg-white p-6 rounded-lg shadow-md flex flex-col gap-6 h-full overflow-auto">
         <section>
           <h2 className="text-xl font-semibold mb-2">
             Why this is a good match
           </h2>
-          <p className="whitespace-pre-wrap text-gray-700">{aiWhyMatch}</p>
+          <p className="whitespace-pre-wrap text-gray-700">
+            {loadingContent ? "Generating match explanation..." : aiWhyMatch}
+          </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold mb-2">Suggested Roadmap</h2>
           <pre className="bg-gray-100 p-3 rounded whitespace-pre-wrap text-gray-700">
-            {aiRoadmap}
+            {loadingContent ? "Generating roadmap..." : aiRoadmap}
           </pre>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold mb-2">How to connect</h2>
-          <p className="text-gray-700">{aiConnectSuggestions}</p>
+          <p className="text-gray-700">
+            {loadingContent
+              ? "Generating connection suggestions..."
+              : aiConnectSuggestions}
+          </p>
         </section>
       </div>
     </div>

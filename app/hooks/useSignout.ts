@@ -16,7 +16,7 @@ export function useSignOut() {
     if (error) {
       setError(error.message);
     } else {
-      router.replace("/login"); // Redirect to login page
+      router.replace("/login");
     }
 
     setLoading(false);

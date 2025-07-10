@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { MatchResult, Skill, SkillType, UserSkill } from "@/types";
+import {
+  MatchResult,
+  PersonalisedContent,
+  Skill,
+  SkillType,
+  UserSkill,
+} from "@/types";
 import { UserWithSkillsAndMatchScore } from "@/types";
 
 export function useUsersWithSkillsAndMatchScores() {
@@ -29,6 +35,7 @@ export function useUsersWithSkillsAndMatchScores() {
         .select(
           `
         matchScore,
+        personalisedContent,
         userB:users (
             id,
             name,
@@ -69,6 +76,7 @@ export function useUsersWithSkillsAndMatchScores() {
           canTeachSkills,
           interestedSkills,
           matchScore: match.matchScore,
+          personalisedContent: match.personalisedContent as PersonalisedContent,
         };
       });
 
