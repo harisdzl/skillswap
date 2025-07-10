@@ -90,7 +90,7 @@ export function LoginForm({
                   disabled={loading}
                   className="w-full cursor-pointer bg-blue-500 hover:bg-blue-700"
                 >
-                  {loading ? <Spinner /> : "Create new account"}
+                  {loading ? <Spinner /> : "Login"}
                 </Button>
               </div>
             </div>
