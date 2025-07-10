@@ -84,6 +84,7 @@ The user flow is as follows:
 ---
 
 ## Entity Relationship Diagram
+<img width="2754" height="1792" alt="skillswap-erd" src="https://github.com/user-attachments/assets/70f6ce8a-bf88-4344-833b-f93ce23b6a16" />
 
 ## Project Plan
 
