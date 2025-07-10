@@ -79,9 +79,8 @@ export default function Page() {
       setSubmitLoading(false);
 
       router.push("/match");
-    } catch (error: any) {
-      console.error("Error submitting profile:", error);
-      alert(`Error submitting profile: ${error.message || error}`);
+    } catch (error) {
+      alert("Error submitting profile:");
     }
   };
 
