@@ -19,3 +19,10 @@ export enum SkillType {
   TEACH = "teach",
   LEARN = "learn",
 }
+export interface UserWithSkills {
+  id: string;
+  name: string;
+  bio: string;
+  canTeachSkills: Skill[];
+  interestedSkills: Skill[];
+}

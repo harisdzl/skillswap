@@ -74,7 +74,7 @@ export default function Page() {
       if (insertError) throw insertError;
       setSubmitLoading(false);
 
-      router.push("/dashboard");
+      router.push("/match");
     } catch (error: any) {
       console.error("Error submitting profile:", error);
       alert(`Error submitting profile: ${error.message || error}`);

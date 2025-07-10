@@ -42,7 +42,7 @@ export function LoginForm({
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/match");
     } finally {
       setLoading(false);
     }
