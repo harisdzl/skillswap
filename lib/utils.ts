@@ -58,8 +58,8 @@ export async function calculateAndStoreMatchScoresForNewUser(userId: string) {
     const matchScore = Math.min(totalScore * 12.5, 100);
 
     matchInserts.push({
-      userAid: userId,
-      userBid: otherId,
+      userAId: userId,
+      userBId: otherId,
       matchScore: matchScore,
     });
   }
@@ -67,7 +67,7 @@ export async function calculateAndStoreMatchScoresForNewUser(userId: string) {
   if (matchInserts.length > 0) {
     const { error: matchError } = await supabase
       .from("user_matches")
-      .upsert(matchInserts, { onConflict: "userAid, userBid" });
+      .upsert(matchInserts, { onConflict: "userAId, userBId" });
 
     if (matchError) throw matchError;
   }
