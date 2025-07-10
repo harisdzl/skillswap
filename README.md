@@ -7,6 +7,8 @@
 - OR by using the demo account: (The demo account's personalised content has already been generated)
 - Email: jack@test.com
 - Password: 123456
+- Best used on desktop. One of the main limitations would be that while development I decided not to optimize most parts on mobile to be able to focus working on the key features of the POC.
+
 
 ## Setup Instructions
 
