@@ -80,7 +80,9 @@ export default function Page() {
 
       router.push("/match");
     } catch (error) {
-      alert("Error submitting profile:");
+      const message =
+        error instanceof Error ? error.message : "An unknown error occurred.";
+      alert(`Error submitting profile: ${message}`);
     }
   };
 
